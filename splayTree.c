@@ -60,4 +60,3 @@ void zagzig(node* self)
 	zag(self);
 }
 
-
