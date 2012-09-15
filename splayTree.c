@@ -3,6 +3,7 @@
 
 typedef struct node {
 	void* data;
+	int key;
 	struct node* left;
 	struct ndoe* right;
 	struct node* parent;
@@ -67,4 +68,31 @@ void zagzig(node* self)
 	zag(self);
 	self->parent = ggp;
 }
+
+node* findMin(node* self)
+{
+	if (self) {
+		if (!self->left) {
+			return self;
+		} else {
+			return findMin(self->left);
+		}
+	} else {
+		return NULL;
+	}
+}
+
+node* findMax(node* self)
+{
+	if (self) {
+		if (!self->right) {
+			return self;
+		} else {
+			return findMax(self->right);
+		}
+	} else {
+		return NULL;
+	}
+}
+
 
