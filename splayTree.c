@@ -32,31 +32,39 @@ void zag(node* self)
 
 void zigzig(node* self)
 {
+	node* ggp = self->parent->parent->parent;
 	zig(self->parent);
 	zig(self);
+	self->parent = ggp;
 }
 
 void zagzag(node* self)
 {
+	node* ggp = self->parent->parent->parent;
 	zag(self->parent);
 	zag(self);
+	self->parent = ggp;
 }
 
 void zigzag(node* self)
 {
+	node* ggp = self->parent->parent->parent;
 	node* grandp = self->parent->parent;
 	zag(self);
 	self->parent = grandp;
 	grandp->left = self;
 	zig(self);
+	self->parent = ggp;
 }
 
 void zagzig(node* self)
 {
+	node* ggp = self->parent->parent->parent;
 	node* grandp = self->parent->parent;
 	zig(self);
 	self->parent = grandp;
 	grandp->right = self;
 	zag(self);
+	self->parent = ggp;
 }
 
