@@ -5,7 +5,7 @@ typedef struct node {
 	void* data;
 	int key;
 	struct node* left;
-	struct ndoe* right;
+	struct node* right;
 	struct node* parent;
 } node;
 
@@ -14,6 +14,22 @@ typedef struct tree {
 	node* min;
 	node* max;
 } tree;
+
+node* makeNode()
+{
+	node* new = malloc(sizeof(node));
+	new->data = NULL;
+	new->key = 0;
+	new->left = new->right = new->parent = NULL;
+	return new;
+}
+
+tree* makeTree()
+{
+	tree* new = malloc(sizeof(tree));
+	new->root = new->min = new->max = NULL;
+	return new;
+}
 
 void zig(node* self)
 {
@@ -95,4 +111,76 @@ node* findMax(node* self)
 	}
 }
 
+node* findSplayPos(node* self, int key)
+{
+	if (key = self->key) {
+		return self;
+	} else if (key < self->key && self->left) {
+		return findSplayPos(self->left, key);
+	} else if (key > self->key && self->right) {
+		return findSplayPos(self->right, key);
+	} else {
+		return self;
+	}
+}
+	
+node* findKeyPos(node* self, int key)
+{
+	if (key = self->key) {
+		return self;
+	} else if (key < self->key && self->left) {
+		return findSplayPos(self->left, key);
+	} else if (key > self->key && self->right) {
+		return findSplayPos(self->right, key);
+	} else {
+		return NULL;
+	}
+}
+	
+node* access(tree* Tree, int key)
+{
+	if (!Tree || !Tree->root) {
+		printf("The tree either empty or NULL!\n");
+		exit(1);
+	}
+	splay(Tree, findSplayPos(Tree->root, key));
+	return findKeyPos(Tree->root, key);
+}
+	
+tree** split(tree* Tree, int key)
+{
+	if (!Tree || !Tree->root) {
+		printf("The tree either empty or NULL!\n");
+		exit(1);
+	}
+	tree** new = malloc(2*sizeof(tree*));
+	new[1]->root = Tree->root->right;
+	new[0]->root = Tree->root;
+	new[0]->root->right = new[1]->root->parent = NULL;
+	Tree = NULL;
+	return new;
+}
 
+tree* join(tree* a, tree* b)
+{
+	splay(a, findMax(a));
+	tree* new = NULL;
+	new = a;
+	b->root->parent = new;
+	new->root->right = b->root;
+	a = b = NULL;
+	return new;
+}
+
+tree* insert(tree* Tree, int key)
+{
+	tree** subtrees = split(Tree, key);
+	tree* new = makeTree();
+	node* newRoot = makeNode();
+	subtrees[0]->root->parent = subtrees[1]->root->parent = newRoot;
+	newRoot->key = key; newRoot->left = subtrees[0]->root;
+	newRoot->right = subtrees[1]->root;
+	new->root = newRoot;
+	return new;
+}
+	
