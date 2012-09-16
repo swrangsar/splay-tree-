@@ -153,12 +153,23 @@ tree** split(tree* Tree, int key)
 		printf("The tree either empty or NULL!\n");
 		exit(1);
 	}
-	tree** new = malloc(2*sizeof(tree*));
-	new[1]->root = Tree->root->right;
-	new[0]->root = Tree->root;
-	new[0]->root->right = new[1]->root->parent = NULL;
-	Tree = NULL;
-	return new;
+
+	tree** new = malloc(2*sizeof(tree*));	
+	if (access(Tree, key)) {
+		new[0]->root = Tree->root->left;
+		new[1]->root = Tree->root->right;
+		new[0]->root->parent = new[1]->root->parent = NULL;
+		if (Tree->root) free(Tree->root);
+		if (Tree) free(Tree);
+		Tree = NULL;
+		return new;
+	} else {
+		new[1]->root = Tree->root->right;
+		new[0]->root = Tree->root;
+		new[0]->root->right = new[1]->root->parent = NULL;
+		Tree = NULL;
+		return new;
+	}
 }
 
 tree* join(tree* a, tree* b)
